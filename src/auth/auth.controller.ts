@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  InternalServerErrorException,
+  Post,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
@@ -21,7 +28,7 @@ export class AuthController {
     }
   }
 
-  @Get('login')
+  @Post('login')
   async login(
     @Body() loginDto: LoginDto,
   ): Promise<{ message: string; token: string } | Error> {
@@ -29,7 +36,8 @@ export class AuthController {
       const result = await this.authService.login(loginDto);
       return { message: 'login done', token: result };
     } catch (e) {
-      throw new Error(`something went wrong ${e?.message}`);
+      if (e instanceof UnauthorizedException) throw e;
+      throw new InternalServerErrorException(`Failed to login: ${e?.message}`);
     }
   }
 }

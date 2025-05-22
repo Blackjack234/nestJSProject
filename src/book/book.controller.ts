@@ -10,12 +10,14 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BookService } from './book.service';
 import { Book } from './schemas/book.schemas';
 import { CreateBookDto } from './dto/create_book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Query as ExpressQuery } from 'express-serve-static-core';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('book')
 export class BookController {
@@ -31,6 +33,7 @@ export class BookController {
   }
 
   @Post('new')
+  @UseGuards(AuthGuard())
   async createBook(
     @Body()
     book: CreateBookDto,

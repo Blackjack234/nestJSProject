@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { User } from './schemas/user.schemas';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
@@ -56,7 +60,8 @@ export class AuthService {
 
       return token;
     } catch (e) {
-      throw new Error(`Failed to login : ${e?.message}`);
+      if (e instanceof UnauthorizedException) throw e;
+      throw new InternalServerErrorException(`Failed to login: ${e?.message}`);
     }
   }
 }
