@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { BookService } from './book.service';
@@ -37,9 +38,10 @@ export class BookController {
   async createBook(
     @Body()
     book: CreateBookDto,
+    @Req() req,
   ): Promise<{ message: string; data: Book } | Error> {
     try {
-      const result = await this.bookService.create(book);
+      const result = await this.bookService.create(book, req.user);
       if (!result) {
         return new Error(`Book not created`);
       }

@@ -10,6 +10,7 @@ import * as mongoose from 'mongoose';
 import { CreateBookDto } from './dto/create_book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Query } from 'express-serve-static-core';
+import { User } from '../auth/schemas/user.schemas';
 @Injectable()
 export class BookService {
   constructor(
@@ -47,9 +48,10 @@ export class BookService {
     }
   }
 
-  async create(book: CreateBookDto): Promise<Book | null> {
+  async create(book: CreateBookDto, user: User): Promise<Book | null> {
     try {
-      const res = await this.bookModel.create(book);
+      const data = Object.assign(book, { user: user._id });
+      const res = await this.bookModel.create(data);
       if (!res) {
         return null;
       }
